@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 Future<void> onBackgroundMessage(RemoteMessage message) async {
+  print('@@@@@ Background message received!');
   await Firebase.initializeApp();
 
   if (message.data.containsKey('data')) {
@@ -21,26 +22,33 @@ Future<void> onBackgroundMessage(RemoteMessage message) async {
 class FCM {
   final _firebaseMessaging = FirebaseMessaging.instance;
 
-  final streamCtlr = StreamController<String>.broadcast();
-  final titleCtlr = StreamController<String>.broadcast();
-  final bodyCtlr = StreamController<String>.broadcast();
+//   final streamCtlr = StreamController<String>.broadcast();
+//   final titleCtlr = StreamController<String>.broadcast();
+//   final bodyCtlr = StreamController<String>.broadcast();
+
+  final listCtlr = StreamController<List<String>>.broadcast();
 
   setNotifications() {
     FirebaseMessaging.onBackgroundMessage(onBackgroundMessage);
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      print('@@@@@ Background message clicked!');
+      listCtlr.sink.add([message.notification!.title!, message.notification!.body!]);
+    });
     FirebaseMessaging.onMessage.listen(
       (message) async {
-          print(message);
-        if (message.data.containsKey('data')) {
-          // Handle data message
-          streamCtlr.sink.add(message.data['data']);
-        }
-        if (message.data.containsKey('notification')) {
-          // Handle notification message
-          streamCtlr.sink.add(message.data['notification']);
-        }
+        print('@@@@@ Foreground message received!');
+        print("onMessage: $message");
+        // if (message.data.containsKey('data')) {
+        //   // Handle data message
+        //   streamCtlr.sink.add(message.data['data']);
+        // }
+        // if (message.data.containsKey('notification')) {
+        //   // Handle notification message
+        //   streamCtlr.sink.add(message.data['notification']);
+        // }
         // Or do other work.
-        titleCtlr.sink.add(message.notification!.title!);
-        bodyCtlr.sink.add(message.notification!.body!);
+        listCtlr.sink.add([message.notification!.title!, message.notification!.body!]);
+        // bodyCtlr.sink.add(message.notification!.body!);
       },
     );
     // With this token you can test it easily on your phone
@@ -49,8 +57,9 @@ class FCM {
   }
 
   dispose() {
-    streamCtlr.close();
-    bodyCtlr.close();
-    titleCtlr.close();
+    listCtlr.close();
+    // streamCtlr.close();
+    // bodyCtlr.close();
+    // titleCtlr.close();
   }
 }
