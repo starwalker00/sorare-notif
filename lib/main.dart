@@ -36,17 +36,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<String> titleList = <String>['titleStuck2', 'titleStuck1'];
   List<String> bodyList = <String>['bodyStuck2', 'bodyStuck1'];
-  // String notificationTitle = 'No Title';
-  // String notificationBody = 'No Body';
-  // String notificationData = 'No Data';
 
   @override
   void initState() {
     final firebaseMessaging = FCM();
     firebaseMessaging.setNotifications();
     
-    // firebaseMessaging.streamCtlr.stream.listen(_changeData);
-    // firebaseMessaging.bodyCtlr.stream.listen(_changeBody);
     firebaseMessaging.listCtlr.stream.listen(_addItemToList);
     
     super.initState();
@@ -59,13 +54,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // _changeData(String msg) => setState(() => addItemToList(msg));
-  // _changeBody(String msg) => setState(() => addItemToList(msg));
   _addItemToList(List<String> notification) => setState(() => addItemToList(notification[0], notification[1]));
-
-  // _changeData(String msg) => setState(() => notificationData = msg);
-  // _changeBody(String msg) => setState(() => notificationBody = msg);
-  // _changeTitle(String msg) => setState(() => notificationTitle = msg);
 
   @override
   Widget build(BuildContext context) {
@@ -78,35 +67,9 @@ class _HomePageState extends State<HomePage> {
         body: Center(child:_buildList()),
       ),
     );
-    // return Scaffold(
-    //   body: Center(
-    //     child: Column(
-    //       mainAxisAlignment: MainAxisAlignment.center,
-    //       children: [
-    //         Text(
-    //           notificationTitle,
-    //           style: Theme.of(context).textTheme.headline4,
-    //         ),
-    //         Text(
-    //           notificationBody,
-    //           style: Theme.of(context).textTheme.headline6,
-    //         ),
-    //         Text(
-    //           notificationData,
-    //           style: Theme.of(context).textTheme.headline6,
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
-  // #docregion list
+
   Widget _buildList() {
-    // return ListView(
-    //   children: [
-    //     _tile('CineArts at the Empire', '85 W Portal Ave'),
-    //   ],
-    // );
       return Expanded(
         child: ListView.builder(
           padding: const EdgeInsets.all(8),
