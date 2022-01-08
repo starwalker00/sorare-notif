@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'firebase_options.dart';
 
@@ -34,6 +35,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  String currentToken = "undefined";
+
   List<String> titleList = <String>['titleStuck2', 'titleStuck1'];
   List<String> bodyList = <String>['bodyStuck2', 'bodyStuck1'];
 
@@ -42,10 +46,13 @@ class _HomePageState extends State<HomePage> {
     final firebaseMessaging = FCM();
     firebaseMessaging.setNotifications();
     
+    firebaseMessaging.tokenCtlr.stream.listen(_changeToken);
     firebaseMessaging.listCtlr.stream.listen(_addItemToList);
-    
+
     super.initState();
   }
+
+  _changeToken(String _token) => setState(() => currentToken = _token);
 
   void addItemToList(String _title, String _body){
     setState(() {
@@ -55,18 +62,25 @@ class _HomePageState extends State<HomePage> {
   }
 
   _addItemToList(List<String> notification) => setState(() => addItemToList(notification[0], notification[1]));
-
+    
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter layout demo',
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: const Text('Flutter layout demo'),
-        ),
-        body: Center(child:_buildList()),
-      ),
-    );
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.add_alert),
+              tooltip: 'Show Snackbar',
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: currentToken));
+                final snackBar = SnackBar(content: Text('Token copied.'));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              },
+            )],
+          ),
+        body: Center(child:_buildList())
+      );
   }
 
   Widget _buildList() {

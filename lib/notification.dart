@@ -24,6 +24,8 @@ class FCM {
   
   // Stream for link with main view
   final listCtlr = StreamController<List<String>>.broadcast();
+  // Stream for token with main view
+  final tokenCtlr = StreamController<String>.broadcast();
 
   setNotifications() {
     // When notification received when app is backgrounded
@@ -44,10 +46,15 @@ class FCM {
     );
     // With this token you can test it easily on your phone
     final token =
-        _firebaseMessaging.getToken().then((value) => print('Token: $value'));
+        _firebaseMessaging.getToken().then(
+          (value) {
+            print('Token: $value');
+            tokenCtlr.sink.add(value!);
+          });    
   }
 
   dispose() {
     listCtlr.close();
+    tokenCtlr.close();
   }
 }
