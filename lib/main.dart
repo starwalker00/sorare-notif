@@ -70,7 +70,7 @@ class _HomePageState extends State<HomePage> {
           title: const Text('Flutter layout demo'),
           actions: <Widget>[
             IconButton(
-              icon: const Icon(Icons.add_alert),
+              icon: const Icon(Icons.copy_all),
               tooltip: 'Show Snackbar',
               onPressed: () {
                 Clipboard.setData(ClipboardData(text: currentToken));
@@ -106,7 +106,7 @@ class _HomePageState extends State<HomePage> {
           )),
       subtitle: Text(body),
       leading: Icon(
-        Icons.theaters,
+        Icons.sports_soccer,
         color: Colors.blue[500],
       ),
     );
